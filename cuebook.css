@@ -1,0 +1,243 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap');
+
+@import url('https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap');
+:root{
+    --primary-bg-color: #159409;
+    --primary-font-color: whitesmoke;
+}
+
+body{
+    margin: 0%;
+    padding: 0%;
+    font-family: "Raleway", sans-serif;
+    box-sizing: border-box;
+}
+
+nav {
+    display: flex;
+    background-color: var(--primary-bg-color);
+    justify-content: space-around;
+}
+#nav-links{
+    display: flex;
+    list-style: none;
+    padding: 10px;
+    align-items: center;
+}
+#nav-links a{
+    text-decoration: none;
+    color: var(--primary-font-color);
+    margin: 10px;
+    transition: all;
+    transition-duration: 500ms;
+    font-size: 15px;
+    font-weight: 500;
+}
+
+#logo-pic{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#nav-links a:hover{
+    color: rgba(50, 59, 136, 0.575);
+}
+
+#menu{
+    display: flex;
+    align-items: center; 
+    cursor: pointer;
+    font-size: 25px;
+    transition: all 500ms;
+    margin-block: 30px;
+}
+#menu:hover{
+    text-shadow: 1px 1px 2px var(--primary-bg-color);
+}
+.nav-col-links{
+    display: none;
+    position: absolute;
+    width: 100%;
+    top: 80px;
+}
+
+#nav-col-links a{
+    text-decoration: none;
+    color: var(--primary-font-color);
+    background-color: var(--primary-bg-color);
+    transition: all;
+    transition-duration: 500ms;
+    font-weight: 600;
+}
+#nav-col-links a:hover{
+    color: var(--primary-font-color);
+}
+#link{
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--primary-bg-color);
+    text-align: center;
+}
+#link:hover{
+    background-color: var(--primary-bg-color);
+}
+
+.login-body{
+    display: flex;
+    justify-content: center ;
+    align-items: center;
+    height: 100vh;
+    flex-direction: column-reverse;
+    gap: 20px;
+    background-image: url(./assets/bg/red-white-pool-ball-black-ball.jpg);
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.login-section{
+    border-radius: 10px;
+    padding: 40px 20px;
+    box-shadow: 0 0 40px rgba(8, 7, 16, 0.6);
+    background-color: rgb(255, 255, 255);
+}
+
+.login-section h3{
+    font-size: 22px;
+    text-align: center;
+}
+
+.login-section input{
+    width: 300px;
+    height: 40px;
+    background-color: rgba(66, 61, 61, 0.074);
+    border: 0;
+    border-radius: 5px;
+    padding-left: 10px;
+    font-size: 16px;
+}
+
+.login-section label{
+    font-size: 18px;
+}
+.login-button{
+    background: var(--primary-bg-color) !important;
+    color: whitesmoke ;
+}
+.register-body{
+    background-image: url(./assets/bg/red-white-pool-ball-black-ball.jpg);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+}
+.register-section{
+    border-radius: 10px;
+    padding: 40px 20px;
+    box-shadow: 0 0 40px rgba(8, 7, 16, 0.6);
+    background-color: rgb(255, 255, 255);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 40%;
+    margin: 50px auto;
+}
+.cue-input-field{
+    display: flex;
+    justify-content: space-between;
+    margin-block: 10px;
+    align-items: center;
+    gap: 10px;
+}
+.register-section input{
+    width: 300px;
+    height: 40px;
+    background-color: rgba(66, 61, 61, 0.074);
+    border: 0;
+    border-radius: 5px;
+    padding-left: 10px;
+    font-size: 16px;
+}
+.register-button{
+    background-color: var(--primary-bg-color) !important;
+    margin-left: 150px;
+    color: var(--primary-font-color);
+}
+
+
+
+@media screen and (max-width: 1440px) {
+
+}
+
+@media screen and (max-width: 1024px) {
+
+}
+
+
+@media screen and (max-width: 768px){
+nav {
+    padding-block: 10px;
+}
+
+
+}
+
+
+@media screen and (max-width: 430px){
+.login-section input {
+    width: 265px;
+    height: 35px;
+    font-size: 14px;
+}
+.login-section label {
+    font-size: 15px;
+}
+.login-section h3 {
+    font-size: 26px;
+}
+
+    }
+
+
+    
+@media screen and (max-width: 375px){
+   
+    }
+
+
+@media screen and (max-width: 320px){
+        .login-section input {
+            width: 230px;
+            height: 35px;
+            font-size: 12px;
+        }
+        .login-section label {
+            font-size: 13px;
+        }
+        .login-section h3 {
+            font-size: 24px;
+        }
+   
+        }
+@media screen and (max-width: 800px) {
+    #nav-links{
+        display: none;
+        position: absolute;
+        top: 80px;
+        width: 100%;
+        z-index: 9;
+    }
+
+}
+
+@media screen and (min-width: 800px) {
+    #menu{
+        display: none;
+    }
+     #nav-col{
+        display: none;
+    }
+    
+}
+
