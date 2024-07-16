@@ -12,28 +12,28 @@ if (isset($_POST['register'])) {
         $cue_password = mysqli_real_escape_string($conn, $_POST['club_password']);
         $cue_cpassword = mysqli_real_escape_string($conn, $_POST['club_cpassword']);
 
+        // SQL query to check for existing username
+        $sql_registered = "SELECT `club_email` FROM `club_user` WHERE `club_email` = '{$cue_email}'";
+        $result_registered = mysqli_query($conn, $sql_registered) or die("Query Failed");
 
-// SQL query to check for existing username
-$sql_registered = "SELECT `club_email` FROM `club_user` WHERE `club_email` = '{$cue_email}'";
-$result_registered = mysqli_query($conn, $sql_registered) or die("Query Failed");
-
-// Condition to check for existing username
-if (mysqli_num_rows($result_registered) > 0) {
-    echo "<p style='color: red; text-align: center; margin: 10px 0;'>Username already exists</p>";
-} else {
-    // Insert new user
-    $sql_register = "INSERT INTO `club_user` (`clubname`, `club_fullname`, `club_email`, `club_mobile`, `club_password`, `club_cpassword`) VALUES ('{$cue_clubname}', '{$cue_fullname}', '{$cue_email}', '{$cue_mobile}', '{$cue_password}', '{$cue_cpassword}')";
-    $result_register = mysqli_query($conn, $sql_register);
-
-    if ($result_register) {
+        // Condition to check for existing username
+        if (mysqli_num_rows($result_registered) > 0) {
+            echo "<p style='color: red; text-align: center; margin: 10px 0;'>Username already exists</p>";
+        } else {
+        // Insert new user
+            $sql_register = "INSERT INTO `club_user` (`clubname`, `club_fullname`, `club_email`, `club_mobile`, `club_password`, `club_cpassword`) VALUES ('{$cue_clubname}', '{$cue_fullname}', '{$cue_email}', '{$cue_mobile}', '{$cue_password}', '{$cue_cpassword}')";
+            $result_register = mysqli_query($conn, $sql_register);
+        // To create Table for Club inserted
+        if ($result_register) {
         // SQL query to create customer table
         $sql_create_table = "CREATE TABLE {$cue_clubname}_customer (
             customer_id INT AUTO_INCREMENT PRIMARY KEY,
             customer_name VARCHAR(225),
             customer_mobile_no VARCHAR(225),
             customer_price VARCHAR(225),
-            customer_check_in_time DATETIME,
-            customer_check_out_time DATETIME
+            customer_visit_date DATE,
+            customer_check_in_time TIME,
+            customer_check_out_time TIME
         );";
         
         $result_customer_table = mysqli_query($conn, $sql_create_table);
@@ -43,13 +43,14 @@ if (mysqli_num_rows($result_registered) > 0) {
         } else {
             echo "<p style='color: red; text-align: center; margin: 10px 0;'>Error creating customer table: " . mysqli_error($conn) . "</p>";
         }
-    } else {
+        } 
+        else {
         echo "<p style='color: red; text-align: center; margin: 10px 0;'>Error registering user: " . mysqli_error($conn) . "</p>";
-    }
-}
-            // Corrected redirection
-            header("Location: login.php");
-            exit();
+        }
+        }
+        // Corrected redirection
+        header("Location: login.php");
+        exit();
         }
     }
 

@@ -4,6 +4,7 @@
 :root{
     --primary-bg-color: #159409;
     --primary-font-color: whitesmoke;
+    --website-font-family: "Raleway", sans-serif;
 }
 
 body{
@@ -163,7 +164,23 @@ nav {
     margin-left: 150px;
     color: var(--primary-font-color);
 }
-
+.date-search-bar{
+    display: flex;
+    justify-content:center ;
+    margin-block: 10px;
+    gap: 10px;
+    align-items: center;
+}
+.date-search-bar input{
+    /* width: 100px; */
+    border-radius: 10px;
+    height: 25px;
+    border: 1px solid var(--primary-bg-color);
+    padding-inline: 20px;
+    font-size: 15px;
+    text-transform: uppercase;
+    font-family: var(--website-font-family);
+}
 
 
 @media screen and (max-width: 1440px) {
