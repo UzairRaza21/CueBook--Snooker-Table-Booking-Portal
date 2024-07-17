@@ -53,6 +53,67 @@ if (!isset($_SESSION['club_email'])){
         <input type="date" id="search-date" autocomplete="off"  placeholder="DD-MM-YYYY" >
 </div>
 
+<div class="new-tables-container">
+
+<div class="new-table-add">
+    <h3>Create Table</h3>
+    <!-- Section-1 -->
+    <form action="<?php $_SERVER['PHP_SELF']; ?>" method="post" class="add-new-table">
+        <div class="cue-input-field">
+            <label for="">Table Name:*</label>
+            <input type="text" name="customer_name" class="table-input" id="" placeholder="e.g Shahid Khan or M. Ali">
+        </div>
+
+        <div class="cue-input-field">
+            <label for="">Rate:*</label>
+            <input type="text" name="customer_price" id="" class="table-input"  placeholder="e.g 4.5">
+        </div>
+
+        <div class="cue-input-field">
+            <label for="">Mobile:*</label>
+            <input type="text" name="customer_mobile_no" id="" class="table-input"  placeholder="e.g 0300-1234567">
+        </div>
+
+        <div class="cue-input-field">
+            <label for="">Email:*</label>
+            <input type="email" name="customer_email" id="" class="table-input"  placeholder="e.g abc@email.com">
+        </div>
+
+        <div class="cue-input-field">
+            <input type="submit" name="table_created" class="table-button" value="+ Create"  id="" onclick="invisible()" >
+        </div>      
+    </form>
+    <?php
+    if (isset($_POST['table_created'])){
+        include 'conn.php';
+    $customer_name = $_POST['customer_name'];
+    $customer_rate = $_POST['customer_price'];
+    $customer_phone = $_POST['customer_mobile_no'];
+    $customer_email = $_POST['customer_email'];
+
+    $sql_customer_info = "INSERT INTO `{$cue_clubname}_customer` (`customer_name`, `customer_mobile_no`, `customer_price`, `customer_email`) VALUES ('{$customer_name}','{$customer_phone}','{$customer_rate}','{$customer_email}')";
+    $result_customer_info = mysqli_query($conn ,$sql_customer_info);
+
+    };
+
+    ?>
+    <!-- Section 2 -->
+    <div class="new-table-section-2">
+        <!-- Check In -->
+    <form action="<?php $_SERVER['PHP_SELF']; ?>" method="post" >
+        <input type="date" name="customer_visit_date" id="" style="display:none">
+        <input type="time" name="customer_check_in-time" style="display:none">
+        <input type="submit" value="Check In">
+    </form>
+        <!-- Check out -->
+    <form action="<?php $_SERVER['PHP_SELF']; ?>" method="post" >
+        <input type="time" name="customer_check_out-time" style="display:none">
+        <input type="submit" value="Check out">
+    </form>
+    </div>
+</div>
+
+</div>
 
 
 

@@ -30,6 +30,7 @@ if (isset($_POST['register'])) {
             customer_id INT AUTO_INCREMENT PRIMARY KEY,
             customer_name VARCHAR(225),
             customer_mobile_no VARCHAR(225),
+            customer_email VARCHAR(225),
             customer_price VARCHAR(225),
             customer_visit_date DATE,
             customer_check_in_time TIME,

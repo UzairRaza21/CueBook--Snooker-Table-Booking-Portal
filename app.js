@@ -1,7 +1,10 @@
 function openMenu(){
    document.getElementById("nav-col-links").classList.toggle("nav-col-links");
 }
-
+let tableAdd = document.querySelector(".add-new-table");
+function invisible(){
+   tableAdd.classList.add('invisible');
+}
 // To show current date in search bar
         // Get the current date
         const today = new Date();
