@@ -4,6 +4,7 @@ include "conn.php";
 if (isset($_SESSION['club_email'])){
     header("location: dashboard.php");
 }
+
 ?>
 
 <?php
@@ -18,7 +19,9 @@ if (isset($_POST['login'])){
     $count = mysqli_num_rows($result_login);
 
     if ($count == 1){
+        $row = mysqli_fetch_assoc($result_login);
         $_SESSION['club_email'] = $login_email;
+        $_SESSION['clubname'] = $row['clubname'];
         header("location: dashboard.php");
     }else{
         echo "Invalid Username or Password";
