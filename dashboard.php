@@ -56,6 +56,8 @@ if (!isset($_SESSION['club_email'])){
 <div class="new-tables-container">
 
 <div class="new-table-add">
+
+
     <h3>Create Table</h3>
     <!-- Section-1 -->
     <form action="<?php $_SERVER['PHP_SELF']; ?>" method="post" class="add-new-table">
@@ -93,24 +95,43 @@ if (!isset($_SESSION['club_email'])){
 
     $sql_customer_info = "INSERT INTO `{$cue_clubname}_customer` (`customer_name`, `customer_mobile_no`, `customer_price`, `customer_email`) VALUES ('{$customer_name}','{$customer_phone}','{$customer_rate}','{$customer_email}')";
     $result_customer_info = mysqli_query($conn ,$sql_customer_info);
-
-    };
-
+    
     ?>
-    <!-- Section 2 -->
+    <!-- Section 2 Start-->
     <div class="new-table-section-2">
         <!-- Check In -->
     <form action="<?php $_SERVER['PHP_SELF']; ?>" method="post" >
         <input type="date" name="customer_visit_date" id="" style="display:none">
         <input type="time" name="customer_check_in-time" style="display:none">
-        <input type="submit" value="Check In">
+        <input type="submit" name="check_in" value="Check In">
     </form>
         <!-- Check out -->
     <form action="<?php $_SERVER['PHP_SELF']; ?>" method="post" >
         <input type="time" name="customer_check_out-time" style="display:none">
-        <input type="submit" value="Check out">
+        <input type="submit" value="Check out" name="check_out">
     </form>
     </div>
+
+    <?php
+    if($result_customer_info){
+        if(isset($_POST['check_in'])){
+            $customer_visit_date = $_POST['customer_visit_date'];
+            $customer_check_in = $_POST['customer_check_in_time'];
+        $sqli_customer_check_in = "INSERT INTO `{$cue_clubname}_customer`(`customer_visit_date`, `customer_check_in_time`) VALUES ('{$customer_visit_date}','{$customer_check_in}')";
+        $result_customer_check_in = mysqli_query($conn ,$sqli_customer_check_in);
+
+        if($result_customer_check_in){
+            if(isset($_POST["check_out"])){
+                $customer_check_out = $_POST["customer_check_out-time"];
+                $sqli_customer_check_out = "INSERT INTO `{$cue_clubname}_customer`(`customer_check_out_time`) VALUES ('{$customer_check_out}')";
+                $result_customer_check_out = mysqli_query($conn ,$sqli_customer_check_out);
+                mysqli_close($conn);
+            }}
+    }}};
+    ?>
+    <!-- Section-2 End -->
+
+
 </div>
 
 </div>
