@@ -64,7 +64,7 @@ if (!isset($_SESSION['club_email'])) {
         <input type="text" name="customer_name" class="table-input" id="customer_name" placeholder="e.g Shahid Khan or M. Ali" required>
     </div>
     <div class="cue-input-field">
-        <label for="customer_price">Rate:*</label>
+        <label for="customer_price">Rate per Min:*</label>
         <input type="text" name="customer_price" id="customer_price" class="table-input" placeholder="e.g 4.5" required>
     </div>
     <div class="cue-input-field">
@@ -100,11 +100,13 @@ $(document).ready(function() {
                 if (data.success) {
                     // Append new table to the list
                     $('.new-tables-container').append(`
-                        <div class="existing-table">
+                        <div class="existing-table" data-customer-id="${data.customer_id}">
                             <p>Name: ${data.customer_name}</p>
                             <p>Rate: ${data.customer_rate}</p>
                             <p>Mobile: ${data.customer_phone}</p>
                             <p>Email: ${data.customer_email}</p>
+                            <p>Check In Time: <span class="check-in-time">${data.customer_check_in_time || 'Not Checked In Yet'}</span></p>
+                            <p>Check Out Time: <span class="check-out-time">${data.customer_check_out_time || 'Not Checked Out Yet'}</span></p>
                             <form class="check-in-form">
                                 <input type="hidden" name="customer_id" value="${data.customer_id}">
                                 <input type="submit" value="Check In" class="table-button">
@@ -135,6 +137,8 @@ $(document).ready(function() {
             success: function(response) {
                 const data = JSON.parse(response);
                 if (data.success) {
+                    const $table = $form.closest('.existing-table');
+                    $table.find('.check-in-time').text(data.check_in_time);
                     // Hide check-in form and show check-out form
                     $form.siblings('.check-out-form').show();
                     $form.hide();
@@ -156,8 +160,10 @@ $(document).ready(function() {
             success: function(response) {
                 const data = JSON.parse(response);
                 if (data.success) {
-                    // Optionally handle UI update after check-out
-                    $form.hide(); // Optionally hide the check-out form after submission
+                    const $table = $form.closest('.existing-table');
+                    $table.find('.check-out-time').text(data.check_out_time);
+                    // Optionally hide the check-out form after submission
+                    $form.hide();
                 } else {
                     alert('Error: ' + data.error);
                 }
@@ -175,7 +181,7 @@ $(document).ready(function() {
                     <input type="text" name="customer_name[]" class="table-input" placeholder="e.g Shahid Khan or M. Ali" required>
                 </div>
                 <div class="cue-input-field">
-                    <label for="customer_price">Rate:*</label>
+                    <label for="customer_price">Rate per Min:*</label>
                     <input type="text" name="customer_price[]" class="table-input" placeholder="e.g 4.5" required>
                 </div>
                 <div class="cue-input-field">
