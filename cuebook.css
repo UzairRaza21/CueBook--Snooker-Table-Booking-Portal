@@ -216,10 +216,10 @@ nav {
     color: var(--primary-font-color);
     border: 0;
     border-radius: 5px;
-    margin-left: 100px;
     font-family: var(--website-font-family);
     font-size: 14px;
     font-weight: 600;
+    margin: 0 auto;
 }
 /* Animation */
 .invisible{

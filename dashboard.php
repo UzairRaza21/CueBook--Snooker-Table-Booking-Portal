@@ -58,6 +58,7 @@ if (!isset($_SESSION['club_email'])) {
 <div class="new-tables-container">
 
 <form id="create-table-form">
+    <h2>Create New Table</h2>
     <div class="cue-input-field">
         <label for="customer_name">Table Name:*</label>
         <input type="text" name="customer_name" class="table-input" id="customer_name" placeholder="e.g Shahid Khan or M. Ali" required>
@@ -78,8 +79,6 @@ if (!isset($_SESSION['club_email'])) {
         <input type="submit" class="table-button" value="Create Table">
     </div>
 </form>
-
-
 
 </div>
 
@@ -108,11 +107,11 @@ $(document).ready(function() {
                             <p>Email: ${data.customer_email}</p>
                             <form class="check-in-form">
                                 <input type="hidden" name="customer_id" value="${data.customer_id}">
-                                <input type="submit" value="Check In">
+                                <input type="submit" value="Check In" class="table-button">
                             </form>
                             <form class="check-out-form" style="display: none;">
                                 <input type="hidden" name="customer_id" value="${data.customer_id}">
-                                <input type="submit" value="Check Out">
+                                <input type="submit" value="Check Out" class="table-button">
                             </form>
                         </div>
                     `);
@@ -170,6 +169,7 @@ $(document).ready(function() {
     $('#add-form-button').on('click', function() {
         $('#forms-container').append(`
             <form class="create-table-form">
+                 <h2>Create New Table</h2>
                 <div class="cue-input-field">
                     <label for="customer_name">Table Name:*</label>
                     <input type="text" name="customer_name[]" class="table-input" placeholder="e.g Shahid Khan or M. Ali" required>
