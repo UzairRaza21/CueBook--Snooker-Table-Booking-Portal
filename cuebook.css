@@ -183,9 +183,17 @@ nav {
 .new-tables-container{
     max-width: 80%;
     margin: 20px auto;
+    display: flex;
+    gap: 80px;
 
 }
-.new-table-add{
+#create-table-form{
+    width: 300px;
+    border: 2px dashed var(--primary-bg-color);
+    padding: 10px;
+    text-align: center;
+}
+.existing-table{
     width: 300px;
     border: 2px dashed var(--primary-bg-color);
     padding: 10px;
@@ -220,6 +228,7 @@ nav {
     animation-timing-function: ease-in-out;
     animation-fill-mode: forwards;
 }
+
 @keyframes invisible {
   0%{
     display: block;
@@ -231,6 +240,10 @@ nav {
     display: none;
   }
 }
+
+
+
+
 @media screen and (max-width: 1440px) {
 
 }

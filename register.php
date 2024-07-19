@@ -24,31 +24,48 @@ if (isset($_POST['register'])) {
             $sql_register = "INSERT INTO `club_user` (`clubname`, `club_fullname`, `club_email`, `club_mobile`, `club_password`, `club_cpassword`) VALUES ('{$cue_clubname}', '{$cue_fullname}', '{$cue_email}', '{$cue_mobile}', '{$cue_password}', '{$cue_cpassword}')";
             $result_register = mysqli_query($conn, $sql_register);
         // To create Table for Club inserted
+
+        
         if ($result_register) {
-        // SQL query to create customer table
-        $sql_create_table = "CREATE TABLE {$cue_clubname}_customer (
-            customer_id INT AUTO_INCREMENT PRIMARY KEY,
-            customer_name VARCHAR(225),
-            customer_mobile_no VARCHAR(225),
-            customer_email VARCHAR(225),
-            customer_price VARCHAR(225),
-            customer_visit_date DATE,
-            customer_check_in_time TIME,
-            customer_check_out_time TIME
-        );";
-        
-        $result_customer_table = mysqli_query($conn, $sql_create_table);
-        
-        if ($result_customer_table) {
-            echo "<p style='color: green; text-align: center; margin: 10px 0;'>User registered and table created successfully</p>";
-        } else {
-            echo "<p style='color: red; text-align: center; margin: 10px 0;'>Error creating customer table: " . mysqli_error($conn) . "</p>";
+            // SQL queries to create tables
+            $sql_create_table_customer = "CREATE TABLE `{$cue_clubname}_customer` (
+                customer_id INT AUTO_INCREMENT PRIMARY KEY,
+                customer_name VARCHAR(225),
+                customer_mobile_no VARCHAR(225),
+                customer_email VARCHAR(225),
+                customer_price VARCHAR(225),
+                customer_visit_date DATE,
+                customer_check_in_time TIME,
+                customer_check_out_time TIME
+            );";
+
+            $sql_create_table_customer_visits = "CREATE TABLE `{$cue_clubname}_customer_visits` (
+                visit_id INT AUTO_INCREMENT PRIMARY KEY,
+                customer_id INT,
+                visit_date DATETIME,
+                check_in_time TIME,
+                check_out_time TIME,
+                FOREIGN KEY (customer_id) REFERENCES `{$cue_clubname}_customer`(customer_id)
+            );";
+
+            // Execute the SQL queries
+            $result_customer_table = mysqli_query($conn, $sql_create_table_customer);
+            if (!$result_customer_table) {
+                echo "<p style='color: red; text-align: center; margin: 10px 0;'>Error creating customer table: " . mysqli_error($conn) . "</p>";
+            }
+
+            $result_customer_visits_table = mysqli_query($conn, $sql_create_table_customer_visits);
+            if (!$result_customer_visits_table) {
+                echo "<p style='color: red; text-align: center; margin: 10px 0;'>Error creating customer visits table: " . mysqli_error($conn) . "</p>";
+            }
+
+            // Check if both tables were created successfully
+            if ($result_customer_table && $result_customer_visits_table) {
+                echo "<p style='color: green; text-align: center; margin: 10px 0;'>User registered and tables created successfully</p>";
+            }
+
         }
-        } 
-        else {
-        echo "<p style='color: red; text-align: center; margin: 10px 0;'>Error registering user: " . mysqli_error($conn) . "</p>";
-        }
-        }
+    }
         // Corrected redirection
         header("Location: login.php");
         exit();
