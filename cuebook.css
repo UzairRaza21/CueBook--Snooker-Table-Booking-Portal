@@ -229,6 +229,40 @@ nav {
     animation-fill-mode: forwards;
 }
 
+.club-customer-info{
+    display: flex;
+    text-align: unset !important;
+    justify-content: space-between;
+}
+.club-customer-info p{
+    margin-block: 0px;
+    font-weight: 600;
+}
+.club-customer-contact p{
+    text-align: left;
+    margin-block: 4px;
+}
+.club-customer-checks{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.club-customer-checks p{
+    margin-block: 8px;
+}
+.club-customer-checks-arrow{
+    font-size: 40px;
+}
+.check-in-time{
+    border: 1px solid var(--primary-bg-color);
+    border-radius: 2px;
+    padding-inline: 25px;
+}
+.check-out-time{
+    border: 1px solid var(--primary-bg-color);
+    border-radius: 2px;
+    padding-inline: 25px;
+}
 @keyframes invisible {
   0%{
     display: block;

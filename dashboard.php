@@ -101,12 +101,23 @@ $(document).ready(function() {
                     // Append new table to the list
                     $('.new-tables-container').append(`
                         <div class="existing-table" data-customer-id="${data.customer_id}">
+                            
+                            <div class="club-customer-info">
                             <p>Name: ${data.customer_name}</p>
-                            <p>Rate: ${data.customer_rate}</p>
+                            <p>Rate: Rs. ${data.customer_rate}/min</p>                            
+                            </div>
+
+                            <div class="club-customer-contact">                            
                             <p>Mobile: ${data.customer_phone}</p>
                             <p>Email: ${data.customer_email}</p>
-                            <p>Check In Time: <span class="check-in-time">${data.customer_check_in_time || 'Not Checked In Yet'}</span></p>
-                            <p>Check Out Time: <span class="check-out-time">${data.customer_check_out_time || 'Not Checked Out Yet'}</span></p>
+                            </div>
+
+                            <div class="club-customer-checks">
+                            <p>Check In Time: <br> <span class="check-in-time">${data.customer_check_in_time || 'N/A'}</span></p>
+                            <div class="club-customer-checks-arrow">&#8594;</div>
+                            <p>Check Out Time: <br> <span class="check-out-time">${data.customer_check_out_time || 'N/A'}</span></p>
+                            </div>
+
                             <form class="check-in-form">
                                 <input type="hidden" name="customer_id" value="${data.customer_id}">
                                 <input type="submit" value="Check In" class="table-button">
