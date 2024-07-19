@@ -8,7 +8,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     // Prepare SQL query to update check-in time
     $sqli_customer_check_in = "UPDATE `{$cue_clubname}_customer` 
-                               SET `customer_check_in_time` = NOW() 
+                               SET `customer_check_in_time` = NOW(),
+                               `customer_visit_date` = NOW()
                                WHERE `customer_id` = ?";
     
     if ($stmt = mysqli_prepare($conn, $sqli_customer_check_in)) {

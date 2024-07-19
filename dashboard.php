@@ -82,7 +82,6 @@ if (!isset($_SESSION['club_email'])) {
 
 </div>
 
-
 <script src="jquery.js"></script>
 <script src="app.js"></script>
 
@@ -101,25 +100,26 @@ $(document).ready(function() {
                     // Append new table to the list
                     $('.new-tables-container').append(`
                         <div class="existing-table" data-customer-id="${data.customer_id}">
-                            
                             <div class="club-customer-info">
-                            <p>Name: ${data.customer_name}</p>
-                            <p>Rate: Rs. ${data.customer_rate}/min</p>                            
+                                <p>Name: ${data.customer_name}</p>
+                                <p>Rate: Rs. ${data.customer_rate}/min</p>
                             </div>
-
-                            <div class="club-customer-contact">                            
-                            <p>Mobile: ${data.customer_phone}</p>
-                            <p>Email: ${data.customer_email}</p>
+                            <div class="club-customer-contact">
+                                <p>Mobile: ${data.customer_phone}</p>
+                                <p>Email: ${data.customer_email}</p>
                             </div>
-
                             <div class="club-customer-checks">
-                            <p>Check In Time: <br> <span class="check-in-time">${data.customer_check_in_time || 'N/A'}</span></p>
-                            <div class="club-customer-checks-arrow">&#8594;</div>
-                            <p>Check Out Time: <br> <span class="check-out-time">${data.customer_check_out_time || 'N/A'}</span></p>
+                                <p>Check In Time: <br> <span class="check-in-time">${data.customer_check_in_time || 'N/A'}</span></p>
+                                <div class="club-customer-checks-arrow">&#8594;</div>
+                                <p>Check Out Time: <br> <span class="check-out-time">${data.customer_check_out_time || 'N/A'}</span></p>
                             </div>
-
+                            <div class="stopwatch">
+                                <span class="stopwatch-time">00:00:00</span>
+                                <p>Total Price: Rs. <span class="total-price">0.00</span></p>
+                            </div>
                             <form class="check-in-form">
                                 <input type="hidden" name="customer_id" value="${data.customer_id}">
+                                <input type="hidden" name="customer_rate" value="${data.customer_rate}">
                                 <input type="submit" value="Check In" class="table-button">
                             </form>
                             <form class="check-out-form" style="display: none;">
@@ -141,6 +141,28 @@ $(document).ready(function() {
     $(document).on('submit', '.check-in-form', function(event) {
         event.preventDefault();
         const $form = $(this);
+        const $table = $form.closest('.existing-table');
+        const $stopwatch = $table.find('.stopwatch');
+        const $stopwatchTime = $stopwatch.find('.stopwatch-time');
+        const $totalPrice = $stopwatch.find('.total-price');
+        const ratePerMin = parseFloat($form.find('input[name="customer_rate"]').val());
+        const startTime = Date.now();
+        $form.data('startTime', startTime); // Store the start time
+
+        // Show the stopwatch
+        $stopwatch.show();
+
+        // Update the stopwatch and price every second
+        const timerInterval = setInterval(() => {
+            const elapsedTime = Date.now() - startTime;
+            const formattedTime = new Date(elapsedTime).toISOString().substr(11, 8);
+            $stopwatchTime.text(formattedTime);
+            const elapsedMinutes = elapsedTime / 60000; // Convert to minutes
+            const totalPrice = (elapsedMinutes * ratePerMin).toFixed(2);
+            $totalPrice.text(totalPrice);
+        }, 1000);
+        $form.data('timerInterval', timerInterval); // Store the timer interval
+
         $.ajax({
             url: 'check_in.php',
             type: 'POST',
@@ -148,12 +170,12 @@ $(document).ready(function() {
             success: function(response) {
                 const data = JSON.parse(response);
                 if (data.success) {
-                    const $table = $form.closest('.existing-table');
                     $table.find('.check-in-time').text(data.check_in_time);
                     // Hide check-in form and show check-out form
                     $form.siblings('.check-out-form').show();
                     $form.hide();
                 } else {
+                    clearInterval(timerInterval); // Stop the timer if there's an error
                     alert('Error: ' + data.error);
                 }
             }
@@ -164,6 +186,18 @@ $(document).ready(function() {
     $(document).on('submit', '.check-out-form', function(event) {
         event.preventDefault();
         const $form = $(this);
+        const $table = $form.closest('.existing-table');
+        const startTime = $form.siblings('.check-in-form').data('startTime');
+        const elapsedTime = Date.now() - startTime;
+
+        clearInterval($form.siblings('.check-in-form').data('timerInterval')); // Stop the timer
+        const formattedTime = new Date(elapsedTime).toISOString().substr(11, 8);
+        const ratePerMin = parseFloat($form.siblings('.check-in-form').find('input[name="customer_rate"]').val());
+        const elapsedMinutes = elapsedTime / 60000; // Convert to minutes
+        const totalPrice = (elapsedMinutes * ratePerMin).toFixed(2);
+        $table.find('.stopwatch-time').text(formattedTime); // Show the total elapsed time
+        $table.find('.total-price').text(totalPrice); // Show the total price
+
         $.ajax({
             url: 'check_out.php',
             type: 'POST',
@@ -171,7 +205,6 @@ $(document).ready(function() {
             success: function(response) {
                 const data = JSON.parse(response);
                 if (data.success) {
-                    const $table = $form.closest('.existing-table');
                     $table.find('.check-out-time').text(data.check_out_time);
                     // Optionally hide the check-out form after submission
                     $form.hide();
@@ -181,59 +214,7 @@ $(document).ready(function() {
             }
         });
     });
-
-    // Add a new form dynamically
-    $('#add-form-button').on('click', function() {
-        $('#forms-container').append(`
-            <form class="create-table-form">
-                 <h2>Create New Table</h2>
-                <div class="cue-input-field">
-                    <label for="customer_name">Table Name:*</label>
-                    <input type="text" name="customer_name[]" class="table-input" placeholder="e.g Shahid Khan or M. Ali" required>
-                </div>
-                <div class="cue-input-field">
-                    <label for="customer_price">Rate per Min:*</label>
-                    <input type="text" name="customer_price[]" class="table-input" placeholder="e.g 4.5" required>
-                </div>
-                <div class="cue-input-field">
-                    <label for="customer_mobile_no">Mobile:*</label>
-                    <input type="text" name="customer_mobile_no[]" class="table-input" placeholder="e.g 0300-1234567" required>
-                </div>
-                <div class="cue-input-field">
-                    <label for="customer_email">Email:*</label>
-                    <input type="email" name="customer_email[]" class="table-input" placeholder="e.g abc@email.com" required>
-                </div>
-                <div class="cue-input-field">
-                    <input type="submit" class="table-button" value="Create Table">
-                </div>
-            </form>
-        `);
-    });
 });
-
-</script>
-
-
-<!-- Live Search -->
-<script>
-    // $(document).ready(function(){
-    //     // For Search Bar of Date
-    //     $('#search-date').on("keyup", function(){
-    //         var search_term = $(this).val();
-    //         $.ajax({
-    //             url: "ajax-live-search-sale.php",
-    //             type: "POST",
-    //             data: { search: search_term },
-    //             success: function(data) {
-    //                 if (data) {
-    //                     $("#ads-container").html(data);
-    //                 } else {
-    //                     $("#ads-container").html("<h4>No Record Found</h4>");
-    //                 }
-    //             }
-    //         });
-    //     });
-    // });
 </script>
 </body>
 </html>
