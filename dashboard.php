@@ -13,6 +13,11 @@ $check_out_done = false;
 $cue_clubname = $_SESSION['clubname'];
 $customer_id = null; // Variable to store customer ID
 
+// Initialize or retrieve session variables
+if (!isset($_SESSION['tables'])) {
+    $_SESSION['tables'] = [];
+}
+
 // Initialize variables to handle form submission and status
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['table_created'])) {
@@ -28,26 +33,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($result_customer_info) {
             $customer_id = mysqli_insert_id($conn);
-            $check_in_done = false;
-            $check_out_done = false;
+            $_SESSION['tables'][$customer_id] = [
+                'customer_id' => $customer_id,
+                'form_submitted' => true,
+                'check_in_done' => false,
+                'check_out_done' => false
+            ];
         }
     } elseif (isset($_POST['check_in']) && isset($_POST['customer_id'])) {
         $customer_id = intval($_POST['customer_id']); // Ensure customer_id is an integer
         $sqli_customer_check_in = "UPDATE `{$cue_clubname}_customer` SET `customer_visit_date` = NOW(), `customer_check_in_time` = NOW() WHERE `customer_id` = {$customer_id}";
         $result_customer_check_in = mysqli_query($conn, $sqli_customer_check_in);
         if ($result_customer_check_in) {
-            $check_in_done = true;
+            $_SESSION['tables'][$customer_id]['check_in_done'] = true;
         }
     } elseif (isset($_POST['check_out']) && isset($_POST['customer_id'])) {
         $customer_id = intval($_POST['customer_id']); // Ensure customer_id is an integer
         $sqli_customer_check_out = "UPDATE `{$cue_clubname}_customer` SET `customer_check_out_time` = NOW() WHERE `customer_id` = {$customer_id}";
         $result_customer_check_out = mysqli_query($conn, $sqli_customer_check_out);
         if ($result_customer_check_out) {
-            $check_out_done = true;
+            $_SESSION['tables'][$customer_id]['check_out_done'] = true;
         }
         mysqli_close($conn);
+    }elseif (isset($_POST['create_another'])) {
+        // Reset the form submission flag to allow creating another table
+        $form_submitted = false;
     }
 }
+
+// Retrieve the state from session
+$form_submitted = $form_submitted || isset($_SESSION['tables']);
+// Get session variables
+ $form_submitted = isset($_SESSION['form_submitted']) ? $_SESSION['form_submitted'] : false;
+ $check_in_done = isset($_SESSION['check_in_done']) ? $_SESSION['check_in_done'] : false;
+ $check_out_done = isset($_SESSION['check_out_done']) ? $_SESSION['check_out_done'] : false;
+ $customer_id = isset($_SESSION['customer_id']) ? $_SESSION['customer_id'] : null;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -123,32 +143,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <input type="submit" name="table_created" class="table-button" value="+ Create" id="create-button">
             </div>
         </form>
-        <?php else: ?>
-            <!-- Hidden field to pass customer_id if form is submitted -->
-            <input type="hidden" id="customer_id" value="<?php echo htmlspecialchars($customer_id); ?>">
         <?php endif; ?>
 
-        <?php if ($form_submitted && !$check_in_done): ?>
-        <!-- Section 2 Start-->
-        <div class="new-table-section-2">
+        <?php foreach ($_SESSION['tables'] as $table): ?>
+        <div class="existing-table">
+            <?php if ($table['form_submitted'] && !$table['check_in_done']): ?>
             <!-- Check In -->
             <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="post">
-                <input type="hidden" name="customer_id" value="<?php echo htmlspecialchars($customer_id); ?>">
+                <input type="hidden" name="customer_id" value="<?php echo htmlspecialchars($table['customer_id']); ?>">
                 <input type="submit" name="check_in" value="Check In">
             </form>
-        <?php endif; ?>
+            <?php endif; ?>
 
-        <?php if ($form_submitted && $check_in_done && !$check_out_done): ?>
+            <?php if ($table['form_submitted'] && $table['check_in_done'] && !$table['check_out_done']): ?>
             <!-- Check out -->
             <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="post">
-                <input type="hidden" name="customer_id" value="<?php echo htmlspecialchars($customer_id); ?>">
+                <input type="hidden" name="customer_id" value="<?php echo htmlspecialchars($table['customer_id']); ?>">
                 <input type="submit" value="Check out" name="check_out">
             </form>
+            <?php endif; ?>
         </div>
+        <?php endforeach; ?>
+
+        <?php if ($form_submitted): ?>
+        <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="post">
+            <input type="submit" name="create_another" value="Create Another Table">
+        </form>
         <?php endif; ?>
-        <!-- Section-2 End -->
     </div>
 </div>
+
 
 <script src="jquery.js"></script>
 <script src="app.js"></script>
