@@ -181,11 +181,11 @@ nav {
     font-family: var(--website-font-family);
 }
 .new-tables-container{
-    max-width: 80%;
+    max-width: 82%;
     margin: 20px auto;
     display: flex;
     gap: 80px;
-
+    flex-wrap: wrap;
 }
 #create-table-form{
     width: 300px;
