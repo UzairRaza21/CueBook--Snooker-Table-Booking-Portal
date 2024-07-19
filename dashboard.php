@@ -52,34 +52,32 @@ if (!isset($_SESSION['club_email'])) {
 
 <div class="date-search-bar">
     <label for="search">Select Date:</label>
-    <input type="date" id="search-date" autocomplete="off" placeholder="DD-MM-YYYY">
+    <input type="date" id="search-date" autocomplete="off">
 </div>
 
 <div class="new-tables-container">
-
-<form id="create-table-form">
-    <h2>Create New Table</h2>
-    <div class="cue-input-field">
-        <label for="customer_name">Table Name:*</label>
-        <input type="text" name="customer_name" class="table-input" id="customer_name" placeholder="e.g Shahid Khan or M. Ali" required>
-    </div>
-    <div class="cue-input-field">
-        <label for="customer_price">Rate per Min:*</label>
-        <input type="text" name="customer_price" id="customer_price" class="table-input" placeholder="e.g 4.5" required>
-    </div>
-    <div class="cue-input-field">
-        <label for="customer_mobile_no">Mobile:*</label>
-        <input type="text" name="customer_mobile_no" id="customer_mobile_no" class="table-input" placeholder="e.g 0300-1234567" required>
-    </div>
-    <div class="cue-input-field">
-        <label for="customer_email">Email:*</label>
-        <input type="email" name="customer_email" id="customer_email" class="table-input" placeholder="e.g abc@email.com" required>
-    </div>
-    <div class="cue-input-field">
-        <input type="submit" class="table-button" value="Create Table">
-    </div>
-</form>
-
+    <form id="create-table-form">
+        <h2>Create New Table</h2>
+        <div class="cue-input-field">
+            <label for="customer_name">Table Name:*</label>
+            <input type="text" name="customer_name" class="table-input" id="customer_name" placeholder="e.g Shahid Khan or M. Ali" required>
+        </div>
+        <div class="cue-input-field">
+            <label for="customer_price">Rate per Min:*</label>
+            <input type="text" name="customer_price" id="customer_price" class="table-input" placeholder="e.g 4.5" required>
+        </div>
+        <div class="cue-input-field">
+            <label for="customer_mobile_no">Mobile:*</label>
+            <input type="text" name="customer_mobile_no" id="customer_mobile_no" class="table-input" placeholder="e.g 0300-1234567" required>
+        </div>
+        <div class="cue-input-field">
+            <label for="customer_email">Email:*</label>
+            <input type="email" name="customer_email" id="customer_email" class="table-input" placeholder="e.g abc@email.com" required>
+        </div>
+        <div class="cue-input-field">
+            <input type="submit" class="table-button" value="Create Table">
+        </div>
+    </form>
 </div>
 
 <script src="jquery.js"></script>
@@ -97,7 +95,6 @@ $(document).ready(function() {
             success: function(response) {
                 const data = JSON.parse(response);
                 if (data.success) {
-                    // Append new table to the list
                     $('.new-tables-container').append(`
                         <div class="existing-table" data-customer-id="${data.customer_id}">
                             <div class="club-customer-info">
@@ -128,11 +125,13 @@ $(document).ready(function() {
                             </form>
                         </div>
                     `);
-                    // Clear the form fields
                     $('#create-table-form')[0].reset();
                 } else {
                     alert('Error: ' + data.error);
                 }
+            },
+            error: function() {
+                alert('Error: Unable to process request.');
             }
         });
     });
@@ -142,26 +141,21 @@ $(document).ready(function() {
         event.preventDefault();
         const $form = $(this);
         const $table = $form.closest('.existing-table');
-        const $stopwatch = $table.find('.stopwatch');
-        const $stopwatchTime = $stopwatch.find('.stopwatch-time');
-        const $totalPrice = $stopwatch.find('.total-price');
+        const $stopwatch = $table.find('.stopwatch-time');
+        const $totalPrice = $table.find('.total-price');
         const ratePerMin = parseFloat($form.find('input[name="customer_rate"]').val());
         const startTime = Date.now();
-        $form.data('startTime', startTime); // Store the start time
+        $form.data('startTime', startTime);
 
-        // Show the stopwatch
-        $stopwatch.show();
-
-        // Update the stopwatch and price every second
         const timerInterval = setInterval(() => {
             const elapsedTime = Date.now() - startTime;
             const formattedTime = new Date(elapsedTime).toISOString().substr(11, 8);
-            $stopwatchTime.text(formattedTime);
-            const elapsedMinutes = elapsedTime / 60000; // Convert to minutes
+            $stopwatch.text(formattedTime);
+            const elapsedMinutes = elapsedTime / 60000;
             const totalPrice = (elapsedMinutes * ratePerMin).toFixed(2);
             $totalPrice.text(totalPrice);
         }, 1000);
-        $form.data('timerInterval', timerInterval); // Store the timer interval
+        $form.data('timerInterval', timerInterval);
 
         $.ajax({
             url: 'check_in.php',
@@ -171,13 +165,16 @@ $(document).ready(function() {
                 const data = JSON.parse(response);
                 if (data.success) {
                     $table.find('.check-in-time').text(data.check_in_time);
-                    // Hide check-in form and show check-out form
                     $form.siblings('.check-out-form').show();
                     $form.hide();
                 } else {
-                    clearInterval(timerInterval); // Stop the timer if there's an error
+                    clearInterval(timerInterval);
                     alert('Error: ' + data.error);
                 }
+            },
+            error: function() {
+                clearInterval(timerInterval);
+                alert('Error: Unable to process request.');
             }
         });
     });
@@ -189,14 +186,13 @@ $(document).ready(function() {
         const $table = $form.closest('.existing-table');
         const startTime = $form.siblings('.check-in-form').data('startTime');
         const elapsedTime = Date.now() - startTime;
-
-        clearInterval($form.siblings('.check-in-form').data('timerInterval')); // Stop the timer
+        clearInterval($form.siblings('.check-in-form').data('timerInterval'));
         const formattedTime = new Date(elapsedTime).toISOString().substr(11, 8);
         const ratePerMin = parseFloat($form.siblings('.check-in-form').find('input[name="customer_rate"]').val());
-        const elapsedMinutes = elapsedTime / 60000; // Convert to minutes
+        const elapsedMinutes = elapsedTime / 60000;
         const totalPrice = (elapsedMinutes * ratePerMin).toFixed(2);
-        $table.find('.stopwatch-time').text(formattedTime); // Show the total elapsed time
-        $table.find('.total-price').text(totalPrice); // Show the total price
+        $table.find('.stopwatch-time').text(formattedTime);
+        $table.find('.total-price').text(totalPrice);
 
         $.ajax({
             url: 'check_out.php',
@@ -206,15 +202,69 @@ $(document).ready(function() {
                 const data = JSON.parse(response);
                 if (data.success) {
                     $table.find('.check-out-time').text(data.check_out_time);
-                    // Optionally hide the check-out form after submission
                     $form.hide();
                 } else {
                     alert('Error: ' + data.error);
                 }
+            },
+            error: function() {
+                alert('Error: Unable to process request.');
             }
         });
     });
+
+    // Add a new form dynamically
+    $('#add-form-button').on('click', function() {
+        $('#forms-container').append(`
+            <form class="create-table-form">
+                <h2>Create New Table</h2>
+                <div class="cue-input-field">
+                    <label for="customer_name">Table Name:*</label>
+                    <input type="text" name="customer_name[]" class="table-input" placeholder="e.g Shahid Khan or M. Ali" required>
+                </div>
+                <div class="cue-input-field">
+                    <label for="customer_price">Rate per Min:*</label>
+                    <input type="text" name="customer_price[]" class="table-input" placeholder="e.g 4.5" required>
+                </div>
+                <div class="cue-input-field">
+                    <label for="customer_mobile_no">Mobile:*</label>
+                    <input type="text" name="customer_mobile_no[]" class="table-input" placeholder="e.g 0300-1234567" required>
+                </div>
+                <div class="cue-input-field">
+                    <label for="customer_email">Email:*</label>
+                    <input type="email" name="customer_email[]" class="table-input" placeholder="e.g abc@email.com" required>
+                </div>
+                <div class="cue-input-field">
+                    <input type="submit" class="table-button" value="Create Table">
+                </div>
+            </form>
+        `);
+    });
 });
+</script>
+
+<!-- Live Search -->
+<script>
+    $(document).ready(function() {
+        $('#search-date').on("change", function() {
+            var search_term = $(this).val();
+            $.ajax({
+                url: "ajax-live-search-sale.php",
+                type: "POST",
+                data: { search: search_term },
+                success: function(data) {
+                    if (data) {
+                        $("#ads-container").html(data);
+                    } else {
+                        $("#ads-container").html("<h4>No Record Found</h4>");
+                    }
+                },
+                error: function() {
+                    $("#ads-container").html("<h4>Error: Unable to process request.</h4>");
+                }
+            });
+        });
+    });
 </script>
 </body>
 </html>
